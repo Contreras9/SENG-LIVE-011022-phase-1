@@ -46,6 +46,15 @@ Now that you have the repository cloned to your local machine, you'll be able to
 1. Click on the Fetch & Merge button on your fork of the repository on GitHub.
 2. Run `git pull` from within the attached terminal of your local copy of the repository in VS Code. 
 
+![Fetch and Merge Into Git Pull](assets/fetch-and-merge-into-git-pull.gif)
+
+## Recommended VS Code Extension for Git
+
+GitLens! See the GIF below for an example of how to install a VSCode extension.
+
+![Installing GitLens](assets/installing-gitlens.gif)
+
+The GitLens extension allows you an integrated Visual interface for viewing past commits, stashes and even file history over time. It adds options directly into the built in Version Control pane of the VSCode editor.
 ## Merge Conflicts
 
 If all goes well, you should not encounter merge conflicts when you follow this workflow as part of participation in lecture. There is one scenario where they might come up, so I want to describe it here and how to address it.
@@ -61,4 +70,12 @@ Say these events happen in this order:
 
 In this case, going through the `fetch & merge` and `git pull` workflow may result in what's called a merge conflict. The safest thing to do in this situation is to run `git stash` locally to hide your changes in your local repository so that the `pull` from GitHub goes off without a hitch. You can still view the code within your stash within VSCode and you can even return it to your machine with `git stash pop` if you like.
 
+![Using Git Stash](assets/using-git-stash.gif)
+
 If this scenario arises, your lecturer will generally communicate the change in advance, so this scenario should be rare. But, should it happen, this is one approach you can take to get around any potential problems.
+
+If you have code stashed in your local repository, it won't be visible within the regular file structure (AKA your working directory). If you want to return the code to your machine, you can still do so by applying the stash.
+
+![Applying a Stash](assets/applying-stash-to-add-change-back-to-folder.gif)
+
+If you prefer, you can simply keep your code in the stash and it'll allow you to more clearly see the difference between your code and the starter code when you click on a stashed change within the Version Control Tab's Stashes dropdown. It will show you a visual diff with your additions highlighted in green and your removals highlighted in red.
