@@ -77,25 +77,25 @@
 
     // if...else
 
-        // const duration = 216;
+        const duration = 216;
 
-        // if (duration < 180) {
-        //     console.log("This song is short!");
-        // } else {
-        //     console.log("This song isn't short.");
-        // }
+        if (duration < 180) {
+            console.log("This song is short!");
+        } else {
+            console.log("This song isn't short.");
+        }
 
     // if...else if...else
 
         // const duration = 216;
 
-        // if (duration > 240) {
-        //     console.log("This song is long!");
-        // } else if (duration < 180) {
-        //     console.log("This song is short!");
-        // } else {
-        //     console.log("This song is a normal length.");
-        // }
+        if (duration > 240) {
+            console.log("This song is long!");
+        } else if (duration < 180) {
+            console.log("This song is short!");
+        } else {
+            console.log("This song is a normal length.");
+        }
         
         
     // (Date Comparisons)
@@ -134,18 +134,18 @@ console.log("------------------------");
 
 
     // this line of code generates a random number between 0 and 24 and assigns its value to `time`
-    const time = Math.ceil(Math.random()*24);
+    const time = Math.ceil(Math.random()*23);
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
-    // if (❓) {
+    if (time < 12) {
 
-        // console.log(`${time} is in the AM.`)
+        console.log(`${time} is in the AM.`)
 
     // In all other cases...
-    // } else {
+    } else { 
 
-        // console.log(`${time} is in the PM.`)
+        console.log(`${time} is in the PM.`)
 
-    // }
+    }
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
 
 
@@ -153,7 +153,9 @@ console.log("------------------------");
     // // ✨ BONUS: Try refactoring the above expression using a ternary operator.
 
     // // ternary version
+    time < 12 ? console.log(`${time} is in the AM.`) : console.log(`${time} is in the PM.`)
     
+    console.log(`${time} is in the ${time < 12 ? 'AM' : 'PM'}.`)
 
     // // 🚨 Be sure to comment out any code above before proceeding to the next activity.
 
@@ -174,14 +176,14 @@ console.log("------------------------");
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
 
-    // ____ today = new Date();
-    // ____ year = today.getFullYear();
-    // ____ month = today.getMonth();
-    // ____ day = today.getDate();
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
 
-    // ____ yesterday = new Date(`${year}-${month}-${day-1}`);
-    // ____ tomorrow = new Date(`${year}-${month}-${day+1}`);
-    // ____ otherDate = yesterday;
+    const yesterday = new Date(`${year}-${month}-${day-1}`);
+    const tomorrow = new Date(`${year}-${month}-${day+1}`);
+    let otherDate = yesterday;
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
 
@@ -193,23 +195,23 @@ console.log("------------------------");
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
 
-    // if (____) {
-    //     console.log('This date is in the past')
-    // } else if (____) {
-    //     console.log('This date is in the future')
-    // } else {
-    //     console.log('This date is today!')
-    // }
+    if (otherDate < today) {
+        console.log('This date is in the past')
+    } else if (otherDate > today) {
+        console.log('This date is in the future')
+    } else {
+        console.log('This date is today!')
+    }
 
-    // otherDate = tomorrow;
+    otherDate = tomorrow;
     
-    // if (____) {
-    //     console.log('This date is in the past')
-    // } else if (____) {
-    //     console.log('This date is in the future')
-    // } else {
-    //     console.log('This date is today!')
-    // }
+    if (otherDate < today) {
+        console.log('This date is in the past')
+    } else if (otherDate > today) {
+        console.log('This date is in the future')
+    } else {
+        console.log('This date is today!')
+    }
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
    
