@@ -181,8 +181,8 @@ console.log("------------------------");
     const month = today.getMonth();
     const day = today.getDate();
 
-    const yesterday = new Date(`${year}-${month}-${day-1}`);
-    const tomorrow = new Date(`${year}-${month}-${day+1}`);
+    const yesterday = new Date(`${year}-${month+1}-${day-1}`);
+    const tomorrow = new Date(`${year}-${month+1}-${day+1}`);
     let otherDate = yesterday;
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
@@ -215,3 +215,19 @@ console.log("------------------------");
 
     // // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧
    
+    // refactor to use a function
+
+function compareDate(otherDate) {
+    if (otherDate < today) {
+        console.log('This date is in the past')
+    } else if (otherDate > today) {
+        console.log('This date is in the future')
+    } else {
+        console.log('This date is today!')
+    }
+    return 'done comparing'
+}
+
+compareDate(tomorrow);
+compareDate(yesterday);
+compareDate(today);

@@ -1,16 +1,16 @@
 // ✅ Declaring, Referencing, and Invoking Functions
 
-  // function playSong() {
-  //   return "playing some song";
-  // }
+  function playSong() {
+    return "playing some song";
+  }
 
   // print a reference to the 'playSong' function
 
-    // console.log(playSong);
+    console.log(playSong);
 
   // call function and evaluate logic
   
-    // console.log(playSong());
+    console.log(playSong());
 
 // ✅ Parameters vs. Arguments
 
@@ -18,31 +18,31 @@
 
   // using the playSong function again, let's define a parameter 'song'
 
-    // function playSong(song) {
-    //   return "playing some song";
-    // }
+    function playSong(song) {
+      return "playing some song";
+    }
 
   // how can we use the paramater to make our code more dynamic?
 
-    // function playSong(song) {
-    //   return `playing: ${song}`;
-    // }
+    function playSong(song) {
+      return `playing: ${song}`;
+    }
 
   // now invoke the function and pass in an argument
 
-    // console.log(
-    //   playSong("Sweet Dreams")
-    // );
+    console.log(
+      playSong("Sweet Dreams")
+    );
 
 // ✅ Arrow Functions
 
 // const squareMe = (n) => n*n;
 
-// const squareMe = (n) => {
-//   return n*n;
-// }
+const squareMe = (n) => {
+  return n*n;
+}
 
-// console.log(squareMe(2))
+console.log(squareMe(4))
 
 // debugging function
 
@@ -59,17 +59,17 @@ function log(obj) {
   // https://www.codecademy.com/learn/game-dev-learn-javascript-higher-order-functions-and-iterators/modules/game-dev-learn-javascript-iterators/cheatsheet
 
 // console.log('starting now');
-// window.setTimeout(() => {
-//   console.log('2 seconds later')
-// }, 2000);
+window.setTimeout(() => {
+  console.log('2 seconds later')
+}, 2000);
 
 // Alternatively
 
-// function callback() {
-//   console.log('2 seconds later')
-// }
-// console.log('starting now');
-// window.setTimeout(callback, 2000);
+function callback() {
+  console.log('2 seconds later')
+}
+console.log('starting now');
+window.setTimeout(callback, 2000);
 
 
 
@@ -101,6 +101,9 @@ function log(obj) {
 // }
 
 // outerFunction()()();
+// const childFunction = outerFunction();
+// const grandChildFunction = childFunction(); //
+// grandChildFunction();
 
 // -------------------------------------------
 
@@ -113,6 +116,7 @@ function log(obj) {
 */
 
 // CODE HERE
+let currentSong = null;
 
 // ✅ Defining Functions
 
@@ -123,9 +127,27 @@ function log(obj) {
 */
 
 // CODE HERE
+function formatDuration(numSeconds) {
+  const min = Math.floor(numSeconds / 60);
+  // const seconds = (numSeconds % 60).toString();
+  // return `${min}:${seconds.padStart(2, '0')}`;
+  // const secondsRemainder = numSeconds % 60;
+  const seconds = zeroPad(numSeconds % 60)
+  return `${min}:${seconds}`
+}
+
+function zeroPad(num) {
+  if (num < 10) {
+    return `0${num}`
+  } else {
+    return `${num}`
+  }
+}
 
 // uncomment the below to test it out
-// formatDuration(216) // should return '3:36'
+console.log(formatDuration(216)) // should return '3:36'
+console.log(formatDuration(186)) // should return '3:06'
+
 
 
 /*
@@ -133,24 +155,22 @@ function log(obj) {
 3. Create a function called `formattedDurationToSeconds` that will take a string describing the duration of a song as an argument and return the number of seconds that string duration represents.
 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
 
-// CODE HERE
+code here
+*/
+
+function formattedDurationToSeconds(durationString) {
+  const durationArray = durationString.split(':');
+  const minutes = parseInt(durationArray[0])
+  const seconds = parseInt(durationArray[1])
+  return minutes*60 + seconds
+}
 
 // uncomment the below to test it out
-// formattedDurationToSeconds('3:36') // should return 216
-
-🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
-*/
-
-
+console.log(formattedDurationToSeconds('3:36')) // should return 216
 /*
 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
-4. Create a function called `playSong` that will take a song as an argument and set `currentSong` to the argument passed.
-🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
-
-// CODE HERE
-
-🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
 */
+
 
 console.log("------------------------");
 console.log("⬇️ Activities ⬇️");
@@ -165,6 +185,9 @@ console.log("------------------------");
 // Congratulations! For dinner tonight, you'll be feasting on: {insert your favorite food here}
 
 // CODE HERE
+function reward() {
+  console.log(`Congratulations! For dinner tonight, you'll be feasting on: Indian Curry!`)
+}
 
 
 // 🚧 Activity Step 2: Utilizing Callbacks with `setTimeout`
@@ -174,10 +197,12 @@ console.log("------------------------");
 // 2. a `delay` number representing the number of milliseconds we'll have to wait before we see our reward
 // The `delayedGratification` function should invoke the `reward` function after `delay` milliseconds have passed.
 
-
+function delayedGratification(reward, delay) {
+  setTimeout(reward, delay)
+}
 
 // To test, uncomment the code below
 
-// delayedGratification(reward, 3000);
+delayedGratification(reward, 3000);
 
 // When you uncomment the code above, you should see your reward message appear in the browser console after 3 seconds have elapsed.
