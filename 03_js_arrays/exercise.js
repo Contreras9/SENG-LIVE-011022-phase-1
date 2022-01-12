@@ -21,17 +21,18 @@ const todoList = [
 // 🚧 Task 1: `addTask(todoList, task)`
 
 function addTask(todoList, task) {
-
+  todoList.push(task)
+  return task;
 }
 
 // // 👟👟👟 uncomment the lines below to test
 
-// console.log('addTask', addTask(todoList, {
-//   task: 'Practice using the filter method',
-//   complete: false,
-//   dueDate: '2021-12-15'
-// }))
-// console.log('todoList after addTask', copy(todoList))
+console.log('addTask', addTask(todoList, {
+  task: 'Practice using the filter method',
+  complete: false,
+  dueDate: '2021-12-15'
+}))
+console.log('todoList after addTask', copy(todoList))
 
 
 
@@ -40,13 +41,13 @@ function addTask(todoList, task) {
 // 🚧 Task 2: `incompleteTasks(todoList)`
 
 function incompleteTasks(todoList) {
-
+  return todoList.filter(task => !task.complete)
 }
 
 // // 👟👟👟 uncomment the lines below to test
 
-// console.log('incompleteTasks', incompleteTasks(todoList))
-// console.log('todoList after incompleteTasks', copy(todoList))
+console.log('incompleteTasks', incompleteTasks(todoList))
+console.log('todoList after incompleteTasks', copy(todoList))
 
 
 
@@ -55,13 +56,13 @@ function incompleteTasks(todoList) {
 // 🚧 Task 3: `incompleteTaskCount(todoList)`
 
 function incompleteTaskCount(todoList) {
-
+  return incompleteTasks(todoList).length;
 }
 
 // // 👟👟👟 uncomment the lines below to test
 
-// console.log('incompleteTaskCount', incompleteTaskCount(todoList))
-// console.log('todoList after incompleteTaskCount', copy(todoList))
+console.log('incompleteTaskCount', incompleteTaskCount(todoList))
+console.log('todoList after incompleteTaskCount', copy(todoList))
 
 
 
@@ -77,17 +78,22 @@ function incompleteTaskCount(todoList) {
 // passed as an argument)
 // Which is more difficult? Why?
 function removeTask(todoList, taskId) {
-
+  // destructively
+  const indexToRemove = todoList.findIndex(task => task.id === taskId);
+  todoList.splice(indexToRemove, 1);
+  return todoList;
+  // non destructively
+  return todoList.filter(task => task.id !== taskId)
 }
 
 // // 👟👟👟 uncomment the lines below to test
 
-// console.log('addTask', addTask(todoList, {
-//   task: 'demo task',
-//   complete: false,
-//   dueDate: '2021-12-15'  
-// }));
-// console.log('todoList after addTask', copy(todoList));
-// console.log('removeTask', removeTask(todoList, 4));
-// console.log('todoList after removeTask', copy(todoList));
+console.log('addTask', addTask(todoList, {
+  task: 'demo task',
+  complete: false,
+  dueDate: '2021-12-15'  
+}));
+console.log('todoList after addTask', copy(todoList));
+console.log('removeTask', removeTask(todoList, 4));
+console.log('todoList after removeTask', copy(todoList));
 
