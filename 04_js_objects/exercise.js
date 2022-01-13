@@ -82,7 +82,9 @@ console.log('todoList after removeTask', copy(todoList));
 
 // ✅ fill in function body below
 function markComplete(todoList, taskId) {
-
+  const task = todoList.find(task => task.id === taskId)
+  task.complete = true;
+  return task;
 }
 
 // // 👟👟👟 uncomment the lines below to test
@@ -104,7 +106,9 @@ function markComplete(todoList, taskId) {
 
 // ✅ fill in function body below
 function updateDueDateForTask(todoList, taskId, dueDate) {
-
+  const task = todoList.find(task => task.id === taskId)
+  task.dueDate = dueDate;
+  return task;
 }
 
 // // 👟👟👟 uncomment the lines below to test

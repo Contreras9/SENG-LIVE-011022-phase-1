@@ -128,7 +128,8 @@ function addSongToBeginningOfPlaylist(playlist, song) {
 // it will be important that our songs have an id so we can interact with them
 // in the browser
 function addSongToEndOfPlaylist(playlist, song) {
-  playlist.push(song);
+  const newSong = Object.assign({}, song, {id: nextId(playlist)})
+  playlist.push(newSong);
   return playlist
   // non-destructively: [...playlist, song] || 
   // const newArray = playlist.slice()
@@ -182,13 +183,18 @@ function getSongNames(playlist) {
 
 // 🚧 🚧 🚧 use reduce to calculate the playlist duration!
 function calculatePlaylistDuration(playlist) {
-
+  const totalDurationInSeconds = playlist.reduce((totalSeconds, song) => {
+    // totalSeconds += song.duration; // equivalent to: totalSeconds = totalSeconds + song.duration
+    // return totalSeconds;
+    return totalSeconds + song.duration;
+  }, 0);
+  return formatDuration(totalDurationInSeconds);
 }
 
 // // 👟👟👟 uncomment the lines below to test
 
-// console.log('calculatePlaylistDuration',calculatePlaylistDuration(playlist))
-// console.log('playlist after calculatePlaylistDuration', playlist)
+console.log('calculatePlaylistDuration',calculatePlaylistDuration(playlist))
+console.log('playlist after calculatePlaylistDuration', playlist)
 
 
 function songsByArtist(playlist, artist) {

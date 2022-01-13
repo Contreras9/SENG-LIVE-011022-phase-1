@@ -50,13 +50,53 @@ let meals = [
 ]
 // the two functions below should take the array of meal objects and turn it into an object with keys for each mealType and values of arrays containing all meals of that type (as strings)
 function generateMenuWithDotNotation(meals) {
-
+  const newObj = {};
+  newObj.breakfast = [];
+  newObj.lunch = [];
+  newObj.dinner = [];
+  for (const meal in meals) {
+    console.log('meal', meal);
+    if (meal.mealType === 'breakfast') {
+      newObj.breakfast.push(meal.meal)
+    } else if (meal.mealType === 'lunch') {
+      newObj.lunch.push(meal.meal)
+    } else if (meal.mealType === 'dinner') {
+      newObj.dinner.push(meal.meal)
+    }
+  }
+  return newObj
 }
 
 console.log('generateMenuWithDotNotation', generateMenuWithDotNotation(meals))
 
 function generateMenuWithBracketNotation(meals) {
-
+	const newObj = {};
+	for(const meal of meals) {
+		const mealType = meal.mealType;
+		// if(!newObj[mealType]) {
+		//	newObj[mealType] = [];
+		//}
+		newObj[mealType] ||= []; // newObj[mealType] = newObj[mealType] || []
+		newObj[mealType].push(meal.meal)
+	}
+	return newObj
 }
 
 console.log('generateMenuWithBracketNotation', generateMenuWithBracketNotation(meals))
+
+
+function generateMenuWithBracketNotationAndReduce(meals) {
+  return meals.reduce((obj, meal) => {
+    obj[meal.mealType] ||= []; // obj[meal.mealType] = obj[meal.mealType] || [];
+    obj[meal.mealType].push(meal.meal);
+    return obj;
+  }, {})
+  // const callback = (obj, meal) => {
+  //   obj[meal.mealType] ||= []; // obj[meal.mealType] = obj[meal.mealType] || [];
+  //   obj[meal.mealType].push(meal.meal);
+  //   return obj;
+  // }
+  // return meals.reduce(callback, {})
+}
+
+console.log('generateMenuWithBracketNotationAndReduce', generateMenuWithBracketNotationAndReduce(meals))
