@@ -54,7 +54,7 @@ function generateMenuWithDotNotation(meals) {
   newObj.breakfast = [];
   newObj.lunch = [];
   newObj.dinner = [];
-  for (const meal in meals) {
+  for (const meal of meals) {
     console.log('meal', meal);
     if (meal.mealType === 'breakfast') {
       newObj.breakfast.push(meal.meal)
