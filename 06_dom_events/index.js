@@ -74,7 +74,9 @@ const songNameElement = document.querySelector('#song-name');
 const artistNameElement = document.querySelector('#artist');
 const playCountElement = document.querySelector('#play-count');
 const playerElement = document.querySelector('#player-frame');
-//
+// Interactive Elements
+const newSongForm = document.querySelector('#newSong');
+const artistNameSelect = document.querySelector('#filterByArtist')
 
 // Helper functions
 // this function will take the array as an argument and return the next id.
@@ -93,10 +95,6 @@ function formatDuration(duration) {
 function formattedDurationToSeconds(formattedDuration) {
   const [seconds, minutes, hours] = formattedDuration.split(':').map(num => parseInt(num)).reverse();
   return seconds + (minutes ? minutes * 60 : 0) + (hours ? hours * 3600 : 0);
-}
-
-function copy(obj) {
-  return JSON.parse(JSON.stringify(obj))
 }
 
 function extractVideoID(url) {
@@ -127,6 +125,10 @@ function renderSong(song) {
   songEl.textContent = song.name;
   artistEl.textContent = `by ${song.artist}`;
   durationEl.textContent = formatDuration(song.duration);
+  li.addEventListener('click', function(e) {
+    loadSongIntoPlayer(song)
+  })
+  // why not: li.addEventListener('click', loadSongIntoPlayer)
   playlistElement.append(li);
   return li;
 }
@@ -137,6 +139,24 @@ function loadPlaylistToSidebar(playlist) {
 }
 
 loadPlaylistToSidebar(playlist);
+
+// we need a function that loads the options into the filter by artist dropdown
+function loadOptionsForFilterByArtist(playlist) {
+  const artistNamesWithDuplicates = playlist.map(song => song.artist);
+  const artistNamesObj = {};
+  artistNamesWithDuplicates.forEach(artist => artistNamesObj[artist] = true)
+  const artistNames = Object.keys(artistNamesObj);
+  // const 
+  artistNameSelect.innerHTML = "<option value=''>Filter by artist</option>"
+  artistNames.forEach(artistName => {
+    const option = document.createElement('option');
+    option.value = artistName;
+    option.textContent = artistName;
+    artistNameSelect.append(option)
+  })
+}
+
+loadOptionsForFilterByArtist(playlist)
 
 // take playlist as argument and add options for each artist to the dropdown
 function loadArtistChoices(playlist) {
@@ -164,7 +184,7 @@ function loadSongIntoPlayer(song) {
 }
 
 function songsByArtist(playlist, artist) {
-  const songsByArtist = playlist.filter(song => song.artist === artist)
+  const songsByArtist = playlist.filter(song => song.artist.includes(artist))
   loadPlaylistToSidebar(songsByArtist)
 }
 
@@ -185,11 +205,36 @@ function removeSongFromPlaylist(playlist, songId) {
   if (foundSongIndex !== -1) {
     const songToRemove = playlist.splice(foundSongIndex, 1)[0];
     // 🚧 🚧 🚧 Remove the song from playlist in the sidebar
-    ____
+    const songElement = document.querySelector(`#playlist li[data-id="${songId}"]`)
+    songElement.remove()
     return songToRemove;
   } else {
     alert('Song not found!')
   }
 }
 
+newSongForm.addEventListener('submit', (event) => { 
+  event.preventDefault();
+  const newSongObj = {
+    name: document.getElementById('nameInput').value,
+    artist: document.getElementById('artistInput').value,
+    duration: formattedDurationToSeconds(document.getElementById('durationInput').value),
+    youtubeLink: document.getElementById('youtubeLinkInput').value
+  }
+  // alternatively, we can access input values through the name attributes of the inputs:
+  // event.target.name.value, event.target.artist.value, etc.
+  // because the html inputs have names of "name", "artist", etc.
+  addSongToPlaylist(playlist, newSongObj)
+})
 
+// attaching listener and defining handler separately is more like you'll see it in react
+// newSongForm.addEventListener('submit', handleNewSongSubmit)
+
+// function handleNewSongSubmit(event) {
+
+// }
+
+artistNameSelect.addEventListener('change', (event) => {
+  const artist = event.target.value;
+  songsByArtist(playlist, artist);
+})
