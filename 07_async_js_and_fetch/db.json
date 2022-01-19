@@ -11,6 +11,13 @@
       "label": "Learn about Iteration",
       "complete": false,
       "dueDate": "2021-11-24"
+    },
+    {
+      "label": "demo task",
+      "dueDate": "2021-1-19",
+      "completed": false,
+      "id": 3,
+      "complete": true
     }
   ],
   "songs": [
