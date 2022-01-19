@@ -5,7 +5,7 @@ const songNameElement = document.querySelector('#song-name');
 const artistNameElement = document.querySelector('#artist');
 const playCountElement = document.querySelector('#play-count');
 const playerElement = document.querySelector('#player-frame');
-const artistReleases = document.querySelector('')
+const artistReleases = document.querySelector('#releases')
 // Interactive Elements
 const newSongForm = document.querySelector('#newSong');
 const artistNameSelect = document.querySelector('#filterByArtist')
@@ -111,12 +111,21 @@ function populateReleases(releases) {
 
 // accepts an artist as an argument (optional) returns a promise for all songs (by the artist if an argument is provided)
 function getSongs(artist = "") {
-  
+  const url = artist ? `http://localhost:3000/songs?artist=${encodeURI(artist)}` : `http://localhost:3000/songs`
+  return fetch(url)
+    .then(response => response.json())
 }
 
 // accepts an object containing song data as an argument and post it to the database
 function createSong(songData) {
-  
+  return fetch('http://localhost:3000/songs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(songData)
+  })
+    .then(response => response.json())
 }
 
 // requests to musicbrainz api to retrieve artist information including releases
@@ -138,7 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // and load them into the sidebar
   // add artist choices to dropdown
   getSongs()
-    .then()
+    .then((songs) => {
+      loadSongsIntoSidebar(songs);
+      loadArtistChoices(songs);
+    })
   // upon form submission persist song to database
   newSongForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -151,14 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
     newSongObj.playCount = 0;
     // 🚧 🚧 🚧 
     // post the song to the database and then render it to the sidebar 
-    // createSong(songDataFromForm)
-    //   .then()
+    createSong(newSongObj)
+      .then(renderSong)
     e.target.reset();
   })
   // When a new artist is selected, load their songs from the database
-  arstistNameSelect.addEventListener('change', (e) => {
+  artistNameSelect.addEventListener('change', (e) => {
     const artist = e.target.value
     // get all songs by the artist and load them into the sidebar
-    
+    getSongs(artist)
+      .then(loadSongsIntoSidebar)
   })
 })
