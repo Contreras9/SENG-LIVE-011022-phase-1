@@ -163,9 +163,6 @@ function getInfoAboutArtist(artistId) {
     })
 }
 
-
-
-
 function getComments(song) {
   return fetch(`http://localhost:3000/comments?songId=${song.id}`)
     .then(res => res.json())
@@ -185,6 +182,22 @@ function createComment(commentData) {
 // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
 // add in updateComment(commentId, commentData) and
 // deleteComment(commentId)
+function updateComment(commentId, commentData) {
+  return fetch(`http://localhost:3000/comments/${commentId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(commentData)
+  })
+    .then(response => response.json())
+}
+
+function deleteComment(commentId) {
+  return fetch(`http://localhost:3000/comments/${commentId}`, {
+    method: 'DELETE'
+  })
+}
 
 
 // DOM Manipulation (Display)
@@ -295,6 +308,7 @@ function populateReleases(releases) {
 function renderComment(record) {
   console.log('commentRecord', record)
   const p = document.createElement('p');
+  p.dataset.id = record.id;
   p.className = "flex justify-between";
   p.innerHTML = `
   <input class="w-5/6" />
@@ -305,6 +319,15 @@ function renderComment(record) {
   input.value = record.comment;
   // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
   // add event listeners for updating or deleting a comment
+  input.addEventListener('input', (event) => {
+    updateComment(record.id, {
+      comment: event.target.value
+    })
+  })
+  deleteBtn.addEventListener('click', (event) => {
+    deleteComment(record.id)
+      .then(() => removeCommentById(record.id))
+  })
   
   commentsListElement.append(p);
 }
@@ -317,7 +340,7 @@ function renderComments(comments) {
 
 function removeCommentById(commentId) {
   // Fill me in!
-  
+  commentsListElement.querySelector(`[data-id="${commentId}"]`).remove()
 }
 
 // helper functions
