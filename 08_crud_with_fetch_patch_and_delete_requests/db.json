@@ -28,10 +28,10 @@
   "songs": [
     {
       "id": 1,
-      "name": "What'd I Say",
-      "artist": "Ray Charles",
+      "name": "What'd I Say about that",
+      "artist": "Ray Charles III",
       "duration": "4:15",
-      "playCount": 0,
+      "playCount": "0",
       "youtubeLink": "https://www.youtube.com/watch?v=HAjeSS3kktA"
     },
     {
@@ -39,7 +39,7 @@
       "name": "Sweet Dreams",
       "artist": "The Eurythmics",
       "duration": "3:35",
-      "playCount": 0,
+      "playCount": "0",
       "youtubeLink": "https://www.youtube.com/watch?v=qeMFqkcPYcg"
     },
     {
@@ -79,7 +79,7 @@
       "name": "Another One Bites the Dust",
       "artist": "Queen",
       "duration": "3:41",
-      "playCount": 0,
+      "playCount": "0",
       "youtubeLink": "https://www.youtube.com/watch?v=eqyUAtzS_6M"
     },
     {
@@ -157,6 +157,11 @@
       "songId": "1",
       "comment": "what is this?",
       "id": 12
+    },
+    {
+      "songId": 1,
+      "comment": "hi there\n",
+      "id": 13
     }
   ]
 }

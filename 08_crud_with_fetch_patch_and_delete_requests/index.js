@@ -9,8 +9,10 @@ const artistReleases = document.querySelector('#releases');
 const commentsListElement = document.querySelector('#comments');
 // Interactive Elements
 const newSongForm = document.querySelector('#newSong');
-const artistNameSelect = document.querySelector('#filterByArtist')
-const newCommentForm = document.querySelector('#newComment')
+const editSongForm = document.querySelector('#editSong');
+const songDeleteButton = document.querySelector('#deleteSong');
+const artistNameSelect = document.querySelector('#filterByArtist');
+const newCommentForm = document.querySelector('#newComment');
 let currentSongId;
 
 // Behavior
@@ -48,6 +50,43 @@ function init() {
         displayTotalDuration(songs);
       })
   })
+  editSongForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+  })
+
+  editSongForm.addEventListener('input', (e) => {
+    triggerSongAutoSave()
+  })
+
+  songDeleteButton.addEventListener('click', (e) => {
+    deleteSong(currentSongId)
+      .then(() => {
+        playlistElement.querySelector(`[data-id="${currentSongId}"]`).remove()
+        getSongs()
+          .then((songs) => {
+            loadSongsIntoSidebar(songs);
+            loadArtistChoices(songs)
+            displayTotalDuration(songs);
+          })
+      })
+  })
+  let queuedSongAutoSave;
+  function triggerSongAutoSave() {
+    // pull data out of form into songData
+    // pass to updateSong()
+    // so we need the songId (currentSongId) and songData
+    clearTimeout(queuedSongAutoSave);
+    queuedSongAutoSave = window.setTimeout(() => {
+      const songData = {
+        name: document.getElementById('song-name').value,
+        artist: document.getElementById('artist').value,
+        playCount: document.getElementById('play-count').value
+      }
+      updateSong(currentSongId, songData)
+        .then((updatedSong) => renderSong(updatedSong))
+    }, 300)
+  }
   // Add Submit Handler for new Comment Form
   // pull data out of form and pass to createComment
   // after promise resolves, pass response to renderComment and reset the form
@@ -88,6 +127,25 @@ function createSong(songData) {
     .then(response => response.json())
 }
 
+// Add update and delete song functions
+
+function updateSong(songId, songData) {
+  return fetch(`http://localhost:3000/songs/${songId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(songData)
+  })
+    .then(response => response.json())
+}
+
+function deleteSong(songId) {
+  return fetch(`http://localhost:3000/songs/${songId}`, {
+    method: 'DELETE'
+  })
+}
+
 function searchArtists(artist) {
   return fetch(`https://musicbrainz.org/ws/2/artist/?query=${encodeURI(artist)}&fmt=json`)
     .then(response => response.json())
@@ -105,7 +163,7 @@ function getInfoAboutArtist(artistId) {
     })
 }
 
-// Add update and delete song functions
+
 
 
 function getComments(song) {
@@ -132,7 +190,8 @@ function createComment(commentData) {
 // DOM Manipulation (Display)
 
 function renderSong(song) {
-  const li = document.createElement('li');
+  const existingLi = playlistElement.querySelector(`[data-id="${song.id}"]`);
+  const li = existingLi || document.createElement('li');
   li.dataset.id = song.id;
   li.className = "flex justify-between p-2 pr-4 cursor-pointer";
   li.innerHTML = `
@@ -150,7 +209,9 @@ function renderSong(song) {
   songEl.textContent = song.name;
   artistEl.textContent = `by ${song.artist}`;
   durationEl.textContent = song.duration;
-  playlistElement.append(li);
+  if (existingLi === null) {
+    playlistElement.append(li);
+  }
   return li;
 }
 
@@ -174,9 +235,9 @@ function loadSongIntoPlayer(song) {
   })
   const selectedLi = document.querySelector(`#playlist li[data-id="${song.id}"]`);
   selectedLi.classList.add('bg-gray-100')
-  songNameElement.textContent = song.name;
-  artistNameElement.textContent = song.artist;
-  playCountElement.textContent = song.playCount === 1 ? '1 play' : `${song.playCount} plays`;
+  songNameElement.value = song.name;
+  artistNameElement.value = song.artist;
+  playCountElement.value = song.playCount;
   playerElement.src = `https://www.youtube.com/embed/${extractVideoID(song.youtubeLink)}`;
   searchArtists(song.artist)
     .then(populateReleases)
@@ -195,6 +256,11 @@ function loadSongIntoPlayer(song) {
   commentsListElement.innerHTML = "";
   getComments(song)
     .then(renderComments)
+  // fetch(`http://localhost:3000/comments?songId=${song.id}`)
+  //  .then(res => res.json())
+  //  .then(comments => {
+  //    comments.forEach(renderComment)
+  //  })
 }
 
 function loadArtistChoices(playlist) {
