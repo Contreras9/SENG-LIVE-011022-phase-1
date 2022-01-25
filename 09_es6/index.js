@@ -16,39 +16,38 @@ const newCommentForm = document.querySelector('#newComment');
 let currentSongId;
 
 // Behavior
-function init() {
+const init = async () => {
   // fetch songs for initial load
-  getSongs()
-    .then((songs) => {
-      loadSongsIntoSidebar(songs);
-      loadArtistChoices(songs)
-      displayTotalDuration(songs);
-    })
+  const songs = await getSongs();
+  loadSongsIntoSidebar(songs);
+  loadArtistChoices(songs)
+  displayTotalDuration(songs);
   
   // handle form submission for creating a new song
-  newSongForm.addEventListener('submit',  (event) => {
+  newSongForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    const { nameInput, artistInput, durationInput, youtubeLinkInput } = event.target
     const songData = {
-      name: event.target.nameInput.value,
-      artist: event.target.artistInput.value,
-      duration: event.target.durationInput.value,
-      youtubeLink: event.target.youtubeLinkInput.value,
+      name: nameInput.value,
+      artist: artistInput.value,
+      duration: durationInput.value,
+      youtubeLink: youtubeLinkInput.value,
       playCount: 0
     }
-    createSong(songData)
-      .then((savedSong) => {
-        renderSong(savedSong);
-        event.target.reset();
-      })
+
+    const savedSong = await createSong(songData)
+    
+    renderSong(savedSong);
+    event.target.reset();
   })
-  artistNameSelect.addEventListener('change', (e) => {
+  artistNameSelect.addEventListener('change', async (e) => {
     const artist = e.target.value
     // get all songs by the artist and load them into the sidebar
-    getSongs(artist)
-      .then(songs => {
-        loadSongsIntoSidebar(songs)
-        displayTotalDuration(songs);
-      })
+    const artistSongs = await getSongs(artist)
+      
+    loadSongsIntoSidebar(artistSongs)
+    displayTotalDuration(artistSongs);
+   
   })
   // Add Submit Handler for new Comment Form
   // pull data out of form and pass to createComment
@@ -59,11 +58,10 @@ function init() {
       songId: event.target.dataset.songId,
       comment: event.target.commentInput.value,
     }
-    createComment(commentData)
-      .then(savedRecord => {
-        renderComment(savedRecord)
-        event.target.reset();
-      })
+    const savedComment = await createComment(commentData)
+      
+    renderComment(savedComment)
+    event.target.reset();
   })
 
 
@@ -74,17 +72,14 @@ function init() {
     e.preventDefault();
   })
 
-  songDeleteButton.addEventListener('click', (e) => {
-    deleteSong(currentSongId)
-      .then(() => {
-        playlistElement.querySelector(`[data-id="${currentSongId}"]`).remove()
-        getSongs()
-          .then((songs) => {
-            loadSongsIntoSidebar(songs);
-            loadArtistChoices(songs)
-            displayTotalDuration(songs);
-          })
-      })
+  songDeleteButton.addEventListener('click', async (e) => {
+    await deleteSong(currentSongId)
+
+    playlistElement.querySelector(`[data-id="${currentSongId}"]`).remove()
+    const songs = await getSongs();
+    loadSongsIntoSidebar(songs);
+    loadArtistChoices(songs)
+    displayTotalDuration(songs);
   })
 
   // debouncing:
@@ -93,20 +88,19 @@ function init() {
   // - queue up another autosave to happen after 300 milliseconds
   // without a change to any of the form inputs
   let queuedSongAutoSave;
-  function triggerSongAutoSave() {
+  const triggerSongAutoSave = () => {
     window.clearTimeout(queuedSongAutoSave);
-    queuedSongAutoSave = window.setTimeout(() => {
+    queuedSongAutoSave = window.setTimeout(async () => {
       // pull data out of form into songData
       // pass to updateSong()
       // so we need the songId (currentSongId) and songData
-      const songId = editSongForm.dataset.songId;
       const songData = {
         name: document.getElementById('song-name').value,
         artist: document.getElementById('artist').value,
         playCount: parseInt(document.getElementById('play-count').value, 10)
       };
-      updateSong(currentSongId, songData)
-        .then(renderSong)
+      const updatedSong = await updateSong(currentSongId, songData)
+      renderSong(updatedSong);
     }, 300)
   }
 
@@ -119,105 +113,127 @@ document.addEventListener('DOMContentLoaded', init)
 // Data
 
 // accepts an artist as an argument (optional) returns a promise for all songs (by the artist if an argument is provided)
-function getSongs(artist = "") {
+// const getSongs = (artist = "") => {
+//   const url = artist ? `http://localhost:3000/songs?artist=${artist}` : 'http://localhost:3000/songs'
+//   return fetch(url)
+//     .then(response => response.json())
+// }
+
+const getSongs = async (artist = "") => {
   const url = artist ? `http://localhost:3000/songs?artist=${artist}` : 'http://localhost:3000/songs'
-  return fetch(url)
-    .then(response => response.json())
+  const response = await fetch(url)
+  return response.json()
 }
 
 
 // accept an object containing song data as an argument and post it to the database
-function createSong(songData) {
-  return fetch('http://localhost:3000/songs', {
+const createSong = async (songData) => {
+  const response = await fetch('http://localhost:3000/songs', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(songData)
   })
-    .then(response => response.json())
+  return response.json()
 }
 
 // Add update and delete song functions
-function updateSong(songId, songData) {
-  return fetch(`http://localhost:3000/songs/${songId}`, {
+const updateSong = async (songId, songData) => {
+  const response = await fetch(`http://localhost:3000/songs/${songId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(songData)
   })
-    .then(res => res.json())
+  return response.json()
 }
 
-function deleteSong(songId) {
+const deleteSong = async (songId) => {
   return fetch(`http://localhost:3000/songs/${songId}`, {
     method: 'DELETE'
   })
 }
 
-function searchArtists(artist) {
-  return fetch(`https://musicbrainz.org/ws/2/artist/?query=${encodeURI(artist)}&fmt=json`)
-    .then(response => response.json())
-    .then(artistInfo => {
-      console.log('artistInfo', artistInfo)
-      const artistId = artistInfo.artists[0].id
-      return getInfoAboutArtist(artistId)
-    })
+// const searchArtists = (artist) => {
+//   return fetch(`https://musicbrainz.org/ws/2/artist/?query=${encodeURI(artist)}&fmt=json`)
+//     .then(response => response.json())
+//     .then(artistInfo => {
+//       console.log('artistInfo', artistInfo)
+//       const artistId = artistInfo.artists[0].id
+//       return getInfoAboutArtist(artistId)
+//     })
+// }
+
+const searchArtists = async (artist) => {
+  const searchResultsResponse = await fetch(`https://musicbrainz.org/ws/2/artist/?query=${encodeURI(artist)}&fmt=json`);
+  // const artistInfo = await searchResultsResponse.json();
+  // console.log('artistInfo', artistInfo)
+  const { artists } = await searchResultsResponse.json();
+  const artistId = artists[0].id;
+
+  return getInfoAboutArtist(artistId);
 }
 
-function getInfoAboutArtist(artistId) {
-  return fetch(`https://musicbrainz.org/ws/2/artist/${artistId}?inc=releases&fmt=json`)
-    .then(response => response.json())
-    .then(data => {
-      console.log('artistData', data)
-      return data.releases.map(r => `${r.title} (${r.date})`)
-    })
-}
+// const getInfoAboutArtist = (artistId) => {
+//   return fetch(`https://musicbrainz.org/ws/2/artist/${artistId}?inc=releases&fmt=json`)
+//     .then(response => response.json())
+//     .then(data => {
+//       console.log('artistData', data)
+//       return data.releases.map(r => `${r.title} (${r.date})`)
+//     })
+// }
 
+const getInfoAboutArtist = async (artistId) => {
+  const response = await fetch(`https://musicbrainz.org/ws/2/artist/${artistId}?inc=releases&fmt=json`)
+  const data = await response.json();
+    
+  // console.log('artistData', data)
+  return data.releases.map(r => `${r.title} (${r.date})`)    
+}
  
 
 
-function getComments(song) {
-  return fetch(`http://localhost:3000/comments?songId=${song.id}`)
-    .then(res => res.json())
+const getComments = async (song) => {
+  const response = await fetch(`http://localhost:3000/comments?songId=${song.id}`);
+  return response.json();
 }
 // add in createComment
-function createComment(commentData) {
-  return fetch('http://localhost:3000/comments', {
+const createComment = async (commentData) => {
+  const response = await fetch('http://localhost:3000/comments', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(commentData)
-  })
-    .then(res => res.json())
+  });
+  return response.json();
 }
 
 // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
 // add in updateComment(commentId, commentData) and
 // deleteComment(commentId)
-function updateComment(commentId, commentData) {
-  return fetch(`http://localhost:3000/comments/${commentId}`, {
+const updateComment = async (commentId, commentData) => {
+  const response = await fetch(`http://localhost:3000/comments/${commentId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(commentData)
   })  
-    .then(res => res.json())
+  return response.json();
 }
 
-function deleteComment(commentId) {
+const deleteComment = (commentId) => {
   return fetch(`http://localhost:3000/comments/${commentId}`, {
     method: 'DELETE'
   })  
-    .then(res => res.json())
 }
 
 // Display
 
-function renderSong(song) {
+const renderSong = (song) => {
   const existingLi = document.querySelector(`#playlist li[data-id="${song.id}"]`);
   const li = existingLi || document.createElement('li');
   li.dataset.id = song.id;
@@ -243,22 +259,22 @@ function renderSong(song) {
   return li;
 }
 
-function loadSongsIntoSidebar(songs) {
+const loadSongsIntoSidebar = (songs) => {
   playlistElement.innerHTML = "";
   songs.forEach(renderSong)
   loadSongIntoPlayer(songs[0])
 }
 
-function displayTotalDuration(songs) {
+const displayTotalDuration = (songs) => {
   playlistDurationElement.textContent = calculateDuration(songs);
 }
 
-function removeSongFromPlaylist(songId) {
+const removeSongFromPlaylist = (songId) => {
   document.querySelector(`#playlist li[data-id="${songId}"]`).remove()
   return songToRemove;
 }
 
-function loadSongIntoPlayer(song) {
+const loadSongIntoPlayer = (song) => {
   document.querySelectorAll('#playlist li').forEach(li => {
     li.classList.remove('bg-gray-100')
   })
@@ -285,9 +301,10 @@ function loadSongIntoPlayer(song) {
   commentsListElement.innerHTML = "";
   getComments(song)
     .then(renderComments)
+    // .then(comments => renderComments(comments))
 }
 
-function loadArtistChoices(playlist) {
+const loadArtistChoices = (playlist) => {
   artistNameSelect.innerHTML = `<option value="">Filter by artist</option>`;
   const artists = playlist.reduce((artistsArray, song) => {
     if (artistsArray.indexOf(song.artist) === -1) {
@@ -303,7 +320,7 @@ function loadArtistChoices(playlist) {
   });
 }
 
-function populateReleases(releases) {
+const populateReleases = (releases) => {
   artistReleases.innerHTML = "";
   const list = releases.forEach(release => {
     const li = document.createElement('li');
@@ -315,7 +332,9 @@ function populateReleases(releases) {
 // define a function renderComment for 
 // rendering a single comment from a 
 // peristed record passed as an argument
-function renderComment(record) {
+const renderComment = (record) => {
+  // console.log(record);
+  const { id, comment } = record;
   const p = document.createElement('p');
   p.className = "flex justify-between";
   p.innerHTML = `
@@ -324,14 +343,14 @@ function renderComment(record) {
   `
   const input = p.querySelector('input');
   const deleteBtn = p.querySelector('button');
-  input.value = record.comment;
+  input.value = comment;
   // 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 🚧 
   // add event listeners for updating or deleting a comment
   input.addEventListener('input', (e) => {
-    updateComment(record.id, {comment: e.target.value})
+    updateComment(id, {comment: e.target.value})
   })
   deleteBtn.addEventListener('click', (e) => {
-    deleteComment(record.id)
+    deleteComment(id)
       .then(() => p.remove())
   })
   commentsListElement.append(p);
@@ -341,25 +360,25 @@ function renderComment(record) {
 // clearing out the comments and fill in the
 // div with the retrieved comments from the API
 // passing them to renderComment 
-function renderComments(comments) {
+const renderComments = (comments) => {
   commentsListElement.innerHTML = "";
   comments.forEach(renderComment)
 }
 
 // helper functions
-function formatDuration(duration) {
+const formatDuration = (duration) => {
   const seconds = duration % 60; // duration - minutes * 60
   const minutes = Math.floor(duration / 60) % 60;
   const hours = Math.floor(duration / 3600);
   return `${hours ? (hours + ':') : ''}${minutes}:${seconds < 10 ? ('0'+ seconds) : seconds}`
 }
 
-function formattedDurationToSeconds(formattedDuration) {
+const formattedDurationToSeconds = (formattedDuration) => {
   const [seconds, minutes, hours] = formattedDuration.split(':').map(num => parseInt(num)).reverse();
   return seconds + (minutes ? minutes * 60 : 0) + (hours ? hours * 3600 : 0);
 }
 
-function extractVideoID(url) {
+const extractVideoID = (url) => {
   const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
   const match = url.match(regExp);
   if (match && match[7].length == 11) {
@@ -369,7 +388,7 @@ function extractVideoID(url) {
   }
 }
 
-function calculateDuration(songs) {
+const calculateDuration = (songs) => {
   const totalDuration = songs.reduce((total, song) => {
     return total + formattedDurationToSeconds(song.duration)
   }, 0)

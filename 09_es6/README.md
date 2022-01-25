@@ -217,7 +217,7 @@ We say the copy is shallow because if the original object or array has values th
 
 ```js
 const arr1 = [1,2,3];
-const arr2 = [3,4,5];
+const arr2 = [4,5,6];
 // how could I use the spread operator to 
 // get the following array: [1,2,3,4,5,6]
 ```
@@ -231,6 +231,9 @@ let formState = {};
 const inputs = document.querySelectorAll('input')
 inputs.forEach(input => input.addEventListener('change', (e) => {
   const {name, value} = e.target;
+  // equivalent to:
+  // const name = e.target.name; 
+  // const value = e.target.value;
   formState[name] = value
 })
 ```
@@ -272,7 +275,7 @@ formState => {...formState, [name]: value}
 This is more frequently seen like this for readability's sake:
 
 ```js
-formState => return {
+formState => { return 
   {
     ...formState,
     [name]: value
