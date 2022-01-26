@@ -129,21 +129,21 @@ Visually, we can see the difference on a graph as well:
 
 | Method | Complexity | Explanation |
 |---|---|---|
-| `push()` |  |  |
-| `pop()` |  |  |
-| `shift()` |  |  |
-| `unshift()` |  |  |
-| `splice()` |  |  |
-| `sort()` |  |  |
-| `concat()` |  |  |
-| `slice()` |  |  |
-| `indexOf()` |  |  |
-| `forEach()` |  |  |
-| `map()` |  |  |
-| `filter()` |  |  |
-| `reduce()` |  |  |
-| `some()` |  |  |
-| `every()` |  |  |
+| `push()` | O(1) | The length or size of the array doesn't affect the number of operations that push has to complete |
+| `pop()` | O(1) | The length or size of the array doesn't affect the number of operations that push has to complete. |
+| `shift()` | O(N) | As the size of the array grows, the number of elements that we have to shift over by one index also grows (in a linear manner). |
+| `unshift()` | O(N) | As the size of the array grows, the number of elements that we have to shift over by one index also grows (in a linear manner). |
+| `splice()` | O(N) | After we add/remove elements we need to reindex all elements after the splice point. |
+| `sort()` | Time: O(NlogN) probably Space: O(1) if sorting in place, O(N) if sorting a copy | Combination of divide and conquer (splitting the array in half - logN) and iteration (N) |
+| `concat()` | Time: O(N + M) Space: O(N + M) | Concat requires creating a new array of N+M space and we need to index all elements in original arrays taking N+M time.|
+| `slice()` | Time: O(N) Space: O(N) | worst case, we're creating a new array (N space) with all contents of original that we need to index (N time) |
+| `indexOf()` |  Time: O(N) Space: O(1) | worst case, the element is last in the array or not in the array at all (N time), we don't need a copy of the array and we just return a single number (1 space) |
+| `forEach()` | Time: O(N) Space: O(1)| We just iterate (N time), don't return a new array (1 space) |
+| `map()` | Time: O(N) Space: O(N) | We iterate (N time) and return a new array of size: N (N space)|
+| `filter()` | Time: O(N) Space: O(N) Ω(1) | We iterate (N time) and return a worst case of all N elements (N space) and best case no elements or a single element Ω(1) |
+| `reduce()` | Time: O(N) Space: ? | If reducing to a number, space complexity would be: O(1), If we're reducing to an object, what would the worst case space complexity be? O(N) |
+| `some()` | Time: O(N) |  |
+| `every()` | Time: O(N) |  |
 
 
 
@@ -205,11 +205,41 @@ checkForDuplicates(arr);
 ```
 
 What is the time complexity of this solution?
-
+O(N^2)
 What is the space complexity of this solution?
-
+O(1)
 
 How could we get better (less) time complexity here at the cost of worse (more) space complexity?
+
+- Sort the array first, then check (by iterating) if the element in the array is the same as the one after it. O(N log N)
+- if we create an object to store the numbers we've seen so far (if you needed to, you could also track how many times you've seen them-for example if we needed to return the number that occurs most often in the array) our algorithm can we have O(N) time complexity and O(N) space complexity. 
+  - O(N) time complexity because we can do a single iteration, storing seen values as keys in an object (which has a O(1) lookup time complexity using `[]` notation)
+  - O(N) space complexity because we're storing the seen values in an object based on how many values are stored in the array. Worst case scenario, there are no duplicates in the array of N size and we add N key value pairs to our object.
+
+```js
+function checkForDuplicates(arr) {
+	let operations = 0;
+  let seen = {};
+	for(let i = 0 ; i < arr.length ; i++) {
+		let current = arr[i];
+    operations++;
+    if(seen[current]) {
+      console.log(operations);
+      return true;
+    }
+    seen[current] = true;
+	}
+
+	console.log(operations);
+	return false;
+}
+
+checkForDuplicates(arr);
+arr.pop();
+checkForDuplicates(arr);
+arr.push(8);
+checkForDuplicates(arr);
+```
 
 
 ## Resources

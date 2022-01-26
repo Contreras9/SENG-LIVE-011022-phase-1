@@ -14,7 +14,7 @@
 
 			const arrayLength = myArray.length;
 
-			// console.log('arrayLength', arrayLength);
+			console.log('arrayLength', arrayLength);
 
 // ✅ Big Θ (Theta) Notation
 
@@ -30,10 +30,10 @@
 		});
 	}
 
-	// console.log('iterateItems(shorterArray)');
-	// iterateItems(shorterArray);
-	// console.log('iterateItems(longerArray)');
-	// iterateItems(longerArray);
+	console.log('iterateItems(shorterArray)');
+	iterateItems(shorterArray);
+	console.log('iterateItems(longerArray)');
+	iterateItems(longerArray);
 
 // ✅ Big Ω (Omega) Notation
 
@@ -49,7 +49,7 @@
 
 	const lettersArray= ['a', 'b', 'c', 'd'];
 	
-	// console.log("findIndex(lettersArray, 'a')", findIndex(lettersArray, 'a')); 	
+	console.log("findIndex(lettersArray, 'a')", findIndex(lettersArray, 'a')); 	
 	// 0  (best case, one iteration)
 
 // ✅ Big O Notation
@@ -61,11 +61,11 @@
 
 	// help us to select the most efficient solution
 	
-		// console.log("findIndex(lettersArray, 'd')", findIndex(lettersArray, 'd'));
+		console.log("findIndex(lettersArray, 'd')", findIndex(lettersArray, 'd'));
 		
 			// 3  (worst case, 4 iterations)
 		
-		// console.log("findIndex(lettersArray, 'd')", findIndex(lettersArray, 'e')); 
+		console.log("findIndex(lettersArray, 'd')", findIndex(lettersArray, 'e')); 
 		
 			// -1 (worst case, 4 iterations)
 
